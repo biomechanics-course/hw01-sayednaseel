@@ -2,6 +2,7 @@
 % using Matlab's unit testing framework.
 % To execute tests, execute runtests('testfjacobian')
 
+clear all;close all;clc
 % define anonymous functions use for jacobian testing
 samplefunction0 = @(x) x(1)^2+x(2)*x(3);           % scalar function of 3x1 x
 samplefunction1 = @(x) [x(1)^3; x(1)^2+x(2)*x(3)]; % 2x1 function, 3x1 x
@@ -22,34 +23,39 @@ abstol = 1e-5; % a rough absolute tolerance for finite differencing
 % All of the variables above are shared between the test cells below.
 
 %% Test 0: Gradient of function 0
+%{1
 % assuming the finite differencing step size is small, the error in
 % finite differencing should not be very large.
 jacobian0 = fgradient(samplefunction0, x0); % take derivative about x0
 assert(isequal(size(jacobian0), [1 3]), 'Jacobian 0 wrong size')
 assert(max(max(abs(jacobian0 - analyticaljacobian0(x0)))) < abstol, ...
   'Numerical Jacobian 0 not very accurate')
-
+%}
 %% Test 1: Jacobian of function 1
+%{1
 % assuming the finite differencing step size is small, the error in
 % finite differencing should not be very large.
-jacobian1 = fjacobian(samplefunction1, x1); % take derivative about x1
+jacobian1 = fjacobian(samplefunction1, x1,1e-6); % take derivative about x1
 assert(isequal(size(jacobian1), [2 3]), 'Jacobian 1 wrong size')
 assert(max(max(abs(jacobian1 - analyticaljacobian1(x1)))) < abstol, ...
   'Numerical Jacobian 1 not very accurate')
-
+%}
 %% Test 2: Jacobian of function 2
+%{1
 jacobian2 = fjacobian(samplefunction2, x2); % take derivative about x1
 assert(isequal(size(jacobian2), [3 2]), 'Jacobian 2 wrong size')
 assert(max(max(abs(jacobian2 - analyticaljacobian2(x2)))) < abstol, ...
   'Numerical Jacobian 2 not very accurate')
-
+%}
 %% Test 3: Change finite difference step size
+%{1
 smalltol = abstol * 1e-2; % try a tighter tolerance
 jacobian3 = fjacobian(samplefunction2, x2, 1e-8); % use smaller step
 assert(max(max(abs(jacobian3 - analyticaljacobian2(x2)))) < smalltol, ...
   'Numerical Jacobian 1 not very accurate')
-
+%}
 %% Test 4: Demonstrate error 
+%{1
 analyticaljacobian = analyticaljacobian2(x2);
 exponents = 0:12;
 for i = 1:length(exponents)
@@ -61,3 +67,4 @@ end
 semilogy(exponents, generror)
 title('Error analysis of finite difference Jacobian')
 xlabel('Finite difference step, 10^{-i}'); ylabel('Root-mean-square error');
+%}
